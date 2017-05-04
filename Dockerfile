@@ -1,0 +1,34 @@
+FROM ubuntu:17.04
+
+MAINTAINER Daniel Fernando Lourusso <daniel@dflourusso.com.br>
+
+LABEL Description="A Simple apache-sll/php image using ubuntu 17.04"
+
+RUN apt-get update && apt-get -y install vim apache2
+RUN printf "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN apt-get -y install php libapache2-mod-php php-mcrypt php-mysql
+RUN sed -i "s#DirectoryIndex.*#DirectoryIndex\ index.php\ index.html\ index.xhtml\ index.htm#" /etc/apache2/mods-enabled/dir.conf
+
+RUN mkdir -p /etc/apache2/ssl
+
+ADD ssl/* /etc/apache2/ssl/
+
+RUN sed -i "s#DocumentRoot.*#DocumentRoot /var/www/html/public#" /etc/apache2/sites-available/000-default.conf \
+    && sed -i "s#</VirtualHost>##" /etc/apache2/sites-available/000-default.conf \
+    && printf "\t<Directory /var/www/html/public>\n\t\tOptions Indexes FollowSymLinks\n\t\tAllowOverride All\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>" >> /etc/apache2/sites-available/000-default.conf \
+
+    && sed -i "s#DocumentRoot.*#DocumentRoot /var/www/html/public#" /etc/apache2/sites-available/default-ssl.conf \
+    && sed -i "s#</IfModule>##" /etc/apache2/sites-available/default-ssl.conf \
+    && sed -i "s#</VirtualHost>##" /etc/apache2/sites-available/default-ssl.conf \
+    && printf "\t\t<Directory /var/www/html/public>\n\t\t\tOptions Indexes FollowSymLinks\n\t\t\tAllowOverride All\n\t\t\tRequire all granted\n\t\t</Directory>\n\t</VirtualHost>\n</IfModule>" >> /etc/apache2/sites-available/default-ssl.conf \
+
+    && sed -i "s#SSLCertificateFile.*#SSLCertificateFile\ /etc/apache2/ssl/apache.crt#g" /etc/apache2/sites-available/default-ssl.conf \
+    && sed -i "s#SSLCertificateKeyFile.*#SSLCertificateKeyFile\ /etc/apache2/ssl/apache.key#" /etc/apache2/sites-available/default-ssl.conf \
+    && a2enmod ssl headers rewrite && a2ensite default-ssl
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+EXPOSE 80
+EXPOSE 443
+
+CMD apache2ctl -D FOREGROUND
