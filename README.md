@@ -1,9 +1,4 @@
-# Docker Ubuntu Apache with ssl and PHP
-
-
-    $ docker run --name ubuntu -v $(pwd):/var/www/html -p 80:80 -p 443:443 --link mysql:mysql -d dflourusso/ubuntu-apache-ssl-php
-
-
+# Docker Debian with Apache, ssl and php7.1
 
 > Apache will search an *index.php* in *./public*
 
@@ -11,9 +6,12 @@ Folder structure example:
 
     .
     ├── ...
-    ├── src      
+    ├── src
     │   ├── App.php
     │   └── ...
-    ├── public   
-    │   └── index.php  
+    ├── public
+    │   └── index.php
     └── ...
+
+
+    $ docker run --name debian-php7.1 -v $(pwd):/var/www/html -p 80:80 -p 443:443 --net=bridge -d dflourusso/debian-apache-ssl-php
