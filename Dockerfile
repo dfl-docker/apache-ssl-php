@@ -11,6 +11,7 @@ RUN apt-get update && apt-get -y install php7.1 php7.1-mysql \
     php7.1-curl php7.1-json php7.1-gd php7.1-mcrypt php7.1-msgpack php7.1-memcached php7.1-intl \
     php7.1-mbstring php7.1-xml php7.1-zip
 
+RUN sed -i "s#short_open_tag = Off#short_open_tag = On#" /etc/php/7.1/cli/php.ini
 RUN printf "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN sed -i "s#DirectoryIndex.*#DirectoryIndex\ index.php\ index.html\ index.xhtml\ index.htm#" /etc/apache2/mods-enabled/dir.conf
 
