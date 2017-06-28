@@ -36,4 +36,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 EXPOSE 80
 EXPOSE 443
 
-CMD apache2ctl -D FOREGROUND
+ADD start.sh /opt/utils/
+RUN chmod +x /opt/utils/start.sh
+
+ENTRYPOINT /opt/utils/start.sh
