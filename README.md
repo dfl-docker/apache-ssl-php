@@ -1,4 +1,4 @@
-# Docker Debian with Apache, ssl and php7.1
+# Docker Debian with php7.1, Apache and ssl
 
 > Apache will search an *index.php* in *./public*
 
